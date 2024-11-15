@@ -1,3 +1,9 @@
-python-telegram-bot==20.0  # Assicurati che la versione sia corretta, in base alla versione che stai utilizzando
-nest_asyncio==1.5.4
-asyncio==3.4.3  # Se usi asyncio, assicurati che sia compatibile con il tuo codice
+anyio==4.6.2.post1
+certifi==2024.8.30
+h11==0.14.0
+httpcore==0.17.3
+httpx==0.24.1
+idna==3.10
+nest-asyncio==1.6.0
+python-telegram-bot==20.3
+sniffio==1.3.1
