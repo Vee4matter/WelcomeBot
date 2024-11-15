@@ -3,6 +3,8 @@ import logging
 from telegram import Update, InputFile
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from telegram.constants import ChatMemberStatus
+import nest_asyncio
+import asyncio
 
 # Imposta il logging per debug
 logging.basicConfig(
@@ -12,7 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Token del bot
-BOT_TOKEN = "7668118428:AAHln_C1Q-q4ckjsMohHrqXietBoUkUwGb0"
+BOT_TOKEN = os.getenv("BOT_TOKEN")  # Utilizza la variabile d'ambiente per maggiore sicurezza
 
 # Percorso della directory delle immagini
 IMAGES_DIR = "./Images"
@@ -63,24 +65,16 @@ async def send_welcome(update: Update, context):
         except FileNotFoundError:
             logger.error(f"Immagine non trovata: {image_path}")
 
-# Funzione principale
-async def main():
-    # Crea l'applicazione
-    application = Application.builder().token(BOT_TOKEN).build()
+# Funzione per monitorare il numero di membri e inviare il benvenuto automaticamente
+async def check_member_count(update: Update, context):
+    chat = update.effective_chat
 
-    # Aggiungi il comando /benvenuti
-    application.add_handler(CommandHandler("benvenuti", send_welcome))
+    # Ottieni il numero di membri nella chat
+    chat_members = await chat.get_members_count()
 
-    # Avvia il bot e aspetta comandi
-    logger.info("Bot avviato e in attesa di comandi...")
-    await application.run_polling()
-
-if __name__ == "__main__":
-    import nest_asyncio
-    import asyncio
-
-    # Abilita la gestione avanzata dell'event loop per evitare conflitti con ambienti come Jupyter
-    nest_asyncio.apply()
-
-    # Esegui il bot
-    asyncio.get_event_loop().run_until_complete(main())
+    # Se ci sono almeno 50 membri, invia il benvenuto
+    if chat_members >= 50:
+        # Salva il numero attuale di utenti per evitare che venga inviato più di una volta
+        current_count = load_user_count()
+        if current_count < chat_members:
+    
